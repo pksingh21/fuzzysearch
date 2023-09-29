@@ -1,4 +1,4 @@
-module github.com/pksingh21/fuzzysearch
+module github.com/lithammer/fuzzysearch
 
 go 1.15
 
