@@ -3,6 +3,8 @@
 package fuzzy
 
 import (
+	"path/filepath"
+	"strings"
 	"unicode"
 	"unicode/utf8"
 
@@ -200,14 +202,17 @@ func RankFindNormalizedFold(source string, targets []string) Ranks {
 
 func rankFind(source string, targets []string, transformer transform.Transformer) Ranks {
 	sourceT := stringTransform(source, transformer)
-
 	var r Ranks
-
 	for index, target := range targets {
-		targetT := stringTransform(target, transformer)
+		segments := strings.Split(target, string(filepath.Separator))
+		newTarget := segments[len(segments)-1]
+		targetT := stringTransform(newTarget, transformer)
 		if matchTransformed(sourceT, targetT) {
-			distance := LevenshteinDistance(source, target)
-			r = append(r, Rank{source, target, distance, index})
+			distance := LevenshteinDistance(source, newTarget)
+			if distance <= 100 {
+				r = append(r, Rank{source, target, distance, index})
+			}
+
 		}
 	}
 	return r
